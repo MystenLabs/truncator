@@ -40,7 +40,10 @@ impl ByteStatisticsSummator for SetBitsSummator {
 
 impl ByteStatisticsSummator for W16Summator {
     fn sum(&self, bytes: &[u8]) -> u32 {
-        bytes.iter().map(|b| ((b >> 4) + (b & LAST_4_BITS_SET)) as u32).sum()
+        bytes
+            .iter()
+            .map(|b| ((b >> 4) + (b & LAST_4_BITS_SET)) as u32)
+            .sum()
         // The above is equivalent to this:
         // let mut sum = 0;
         // for b in bytes {
@@ -60,57 +63,60 @@ impl ByteStatisticsSummator for W256Summator {
 
 impl ByteStatisticsSummator for Same2BitSummator {
     fn sum(&self, bytes: &[u8]) -> u32 {
-        bytes.iter().map(|b| {
-            // TODO: this can be better optimized via OR statements.
-            let mut sum = 0;
-            let b0 = (b & FIRST_2_BITS_SET).count_ones();
-            let b1 = (b & SECOND_2_BITS_SET).count_ones();
-            let b2 = (b & THIRD_2_BITS_SET).count_ones();
-            let b3 = (b & LAST_2_BITS_SET).count_ones();
+        bytes
+            .iter()
+            .map(|b| {
+                // TODO: this can be better optimized via OR statements.
+                let mut sum = 0;
+                let b0 = (b & FIRST_2_BITS_SET).count_ones();
+                let b1 = (b & SECOND_2_BITS_SET).count_ones();
+                let b2 = (b & THIRD_2_BITS_SET).count_ones();
+                let b3 = (b & LAST_2_BITS_SET).count_ones();
 
-            if b0 == 0 || b0 == 2 {
-                sum += 1;
-            }
-            if b1 == 0 || b1 == 2 {
-                sum += 1;
-            }
-            if b2 == 0 || b2 == 2 {
-                sum += 1;
-            }
-            if b3 == 0 || b3 == 2 {
-                sum += 1;
-            }
-            sum
-        }).sum()
+                if b0 == 0 || b0 == 2 {
+                    sum += 1;
+                }
+                if b1 == 0 || b1 == 2 {
+                    sum += 1;
+                }
+                if b2 == 0 || b2 == 2 {
+                    sum += 1;
+                }
+                if b3 == 0 || b3 == 2 {
+                    sum += 1;
+                }
+                sum
+            })
+            .sum()
     }
 }
 
 impl ByteStatisticsSummator for Same4BitSummator {
     fn sum(&self, bytes: &[u8]) -> u32 {
-        bytes.iter().map(|b| {
-            let mut sum = 0;
-            let b0 = (b & FIRST_4_BITS_SET).count_ones();
-            let b1 = (b & LAST_4_BITS_SET).count_ones();
+        bytes
+            .iter()
+            .map(|b| {
+                let mut sum = 0;
+                let b0 = (b & FIRST_4_BITS_SET).count_ones();
+                let b1 = (b & LAST_4_BITS_SET).count_ones();
 
-            if b0 == 0 || b0 == 4 {
-                sum += 1;
-            }
-            if b1 == 0 || b1 == 4 {
-                sum += 1;
-            }
-            sum
-        }).sum()
+                if b0 == 0 || b0 == 4 {
+                    sum += 1;
+                }
+                if b1 == 0 || b1 == 4 {
+                    sum += 1;
+                }
+                sum
+            })
+            .sum()
     }
 }
 
 impl ByteStatisticsSummator for Same8BitSummator {
     fn sum(&self, bytes: &[u8]) -> u32 {
-        bytes.iter().map(|b| {
-            if *b == 0 || *b == 255 {
-                1
-            } else {
-                0
-            }
-        }).sum()
+        bytes
+            .iter()
+            .map(|b| if *b == 0 || *b == 255 { 1 } else { 0 })
+            .sum()
     }
 }
