@@ -9,7 +9,10 @@ const THIRD_2_BITS_SET: u8 = 0b00001100u8;
 const LAST_2_BITS_SET: u8 = 0b00000011u8;
 
 /// Get the num of set bits of a slice, which simulates Lamport+ (Winternitz sum for w = 2).
-pub struct SetBitsSummator();
+pub struct W2Summator();
+
+/// Get the sum of a slice at two bits granularity, which simulates Winternitz sum for w = 4.
+pub struct W4Summator();
 
 /// Get the sum of a slice at half byte granularity, which simulates Winternitz sum for w = 16.
 pub struct W16Summator();
@@ -26,7 +29,7 @@ pub struct Same4BitSummator();
 /// Get the num of "0000_0000" or "1111_1111" bytes in a slice.
 pub struct Same8BitSummator();
 
-impl ByteStatisticsSummator for SetBitsSummator {
+impl ByteStatisticsSummator for W2Summator {
     fn sum(&self, bytes: &[u8]) -> u32 {
         bytes.iter().map(|b| b.count_ones()).sum()
         // The above is equivalent to this:
@@ -35,6 +38,20 @@ impl ByteStatisticsSummator for SetBitsSummator {
         //     sum += b.count_ones()
         // }
         // sum
+    }
+}
+
+impl ByteStatisticsSummator for W4Summator {
+    fn sum(&self, bytes: &[u8]) -> u32 {
+        bytes
+            .iter()
+            .map(|b| {
+                ((b >> 6)
+                    + ((b & SECOND_2_BITS_SET) >> 4)
+                    + ((b & THIRD_2_BITS_SET) >> 2)
+                    + (b & LAST_2_BITS_SET)) as u32
+            })
+            .sum()
     }
 }
 
