@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 use truncator::summators::W16Summator;
 use truncator::utils::summator_statistics;
+use fastcrypto::secp256k1;
+
+mod pubkey;
 
 fn main() {
     let msg = "truncator";
@@ -20,4 +23,7 @@ fn main() {
     for (k, x) in hashmap {
         println!("{}, {}", k, x);
     }
+
+    pubkey::pubkeymine();
+
 }

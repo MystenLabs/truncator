@@ -997,6 +997,8 @@ name = "truncator"
 version = "0.1.0"
 dependencies = [
  "fastcrypto",
+ "rand",
+ "secp256k1",
 ]
 
 [[package]]
