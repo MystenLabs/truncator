@@ -4,12 +4,12 @@ use crate::secp256k1::Secp256k1KeyPair;
 
 pub fn pubkeymine() {
 
-    let mut count = 0;
+    let mut count: u64= rand::random();
 
   loop {
     count += 1;
 
-    let mut rng = StdRng::from_seed([count; 32]);
+    let mut rng = StdRng::seed_from_u64(count);
 
     let newkey = Secp256k1KeyPair::generate(&mut rng);
     
@@ -17,7 +17,8 @@ pub fn pubkeymine() {
     
     let fixedbytes = newbytes[1];
 
-    if fixedbytes == 107 {
+    if fixedbytes == 100 {
+      println!("{}", count);
       break;
     }
   }
