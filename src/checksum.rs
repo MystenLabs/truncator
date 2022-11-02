@@ -3,7 +3,6 @@ use truncator::summators::W16Summator;
 use truncator::utils::summator_statistics;
 
 pub fn checksum() {
-
     let msg = "truncator";
 
     let mut hashmap: HashMap<u32, u32> = HashMap::new();
@@ -21,6 +20,4 @@ pub fn checksum() {
     for (k, x) in hashmap {
         println!("{}, {}", k, x);
     }
-
-
 }
