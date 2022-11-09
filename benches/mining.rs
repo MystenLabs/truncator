@@ -260,9 +260,9 @@ mod mining_benches {
         name = mining_benches;
         config = Criterion::default().significance_level(0.1).sample_size(10);
         targets =
-            // key_generation,
-            // signing,
-            // hashing,
+            key_generation,
+            signing,
+            hashing,
             combo_pubkey_and_hashing,
     }
 }
