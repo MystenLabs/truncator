@@ -4,6 +4,7 @@ extern crate criterion;
 mod mining_benches {
     use super::*;
     use criterion::*;
+    use fastcrypto::hash::{Blake3, HashFunction, Sha256, Sha3_256};
     use fastcrypto::{ed25519::Ed25519KeyPair, secp256k1::Secp256k1KeyPair, traits::KeyPair};
     use rand::{prelude::ThreadRng, thread_rng};
     use signature::Signer;
@@ -94,12 +95,65 @@ mod mining_benches {
         }
     }
 
+    fn hashing(c: &mut Criterion) {
+        // Note that for 3 bytes, benchmarks are very slow.
+        const FIXED_BYTES_NUM: [usize; 3] = [1, 2, 3];
+
+        for num in FIXED_BYTES_NUM {
+            let mut counter = 0u64;
+
+            c.bench_function(
+                &("sha2_256_zerobytes=".to_owned() + &num.to_string()),
+                move |b| {
+                    b.iter(|| loop {
+                        // Note that ed25519 signing is deterministic, thus we retry with a counter.
+                        counter = rand::random();
+                        if Sha256::digest(&counter.to_le_bytes()).as_ref()[..num] == vec![0u8; num]
+                        {
+                            break;
+                        }
+                    })
+                },
+            );
+
+            c.bench_function(
+                &("sha3_256_zerobytes=".to_owned() + &num.to_string()),
+                move |b| {
+                    b.iter(|| loop {
+                        // Note that ed25519 signing is deterministic, thus we retry with a counter.
+                        counter = rand::random();
+                        if Sha3_256::digest(&counter.to_le_bytes()).as_ref()[..num]
+                            == vec![0u8; num]
+                        {
+                            break;
+                        }
+                    })
+                },
+            );
+
+            c.bench_function(
+                &("blake3_256_zerobytes=".to_owned() + &num.to_string()),
+                move |b| {
+                    b.iter(|| loop {
+                        // Note that ed25519 signing is deterministic, thus we retry with a counter.
+                        counter = rand::random();
+                        if Blake3::digest(&counter.to_le_bytes()).as_ref()[..num] == vec![0u8; num]
+                        {
+                            break;
+                        }
+                    })
+                },
+            );
+        }
+    }
+
     criterion_group! {
         name = mining_benches;
         config = Criterion::default().significance_level(0.1).sample_size(10);
         targets =
             key_generation,
             signing,
+            hashing,
     }
 }
 
