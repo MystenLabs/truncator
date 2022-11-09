@@ -147,13 +147,123 @@ mod mining_benches {
         }
     }
 
+    fn combo_pubkey_and_hashing(c: &mut Criterion) {
+        // Note that for 3 bytes, benchmarks are very slow.
+        const FIXED_BYTES_NUM: [usize; 3] = [1, 2, 3];
+
+        for num in FIXED_BYTES_NUM {
+            let mut csprng1: ThreadRng = thread_rng();
+            let mut csprng2 = csprng1.clone();
+            let mut csprng3 = csprng1.clone();
+            let mut csprng4 = csprng1.clone();
+            let mut csprng5 = csprng1.clone();
+            let mut csprng6 = csprng1.clone();
+
+            c.bench_function(
+                &("Ed25519_sha2_256_pubkey_hashing_zerobytes=".to_owned() + &num.to_string()),
+                move |b| {
+                    b.iter(|| loop {
+                        if Sha256::digest(Ed25519KeyPair::generate(&mut csprng1).public().as_ref())
+                            .as_ref()[..num]
+                            == vec![0u8; num]
+                        {
+                            break;
+                        }
+                    })
+                },
+            );
+
+            c.bench_function(
+                &("Ed25519_sha3_256_pubkey_hashing_zerobytes=".to_owned() + &num.to_string()),
+                move |b| {
+                    b.iter(|| loop {
+                        if Sha3_256::digest(
+                            Ed25519KeyPair::generate(&mut csprng2).public().as_ref(),
+                        )
+                        .as_ref()[..num]
+                            == vec![0u8; num]
+                        {
+                            break;
+                        }
+                    })
+                },
+            );
+
+            c.bench_function(
+                &("Ed25519_blake3_256_pubkey_hashing_zerobytes=".to_owned() + &num.to_string()),
+                move |b| {
+                    b.iter(|| loop {
+                        if Blake3::digest(Ed25519KeyPair::generate(&mut csprng3).public().as_ref())
+                            .as_ref()[..num]
+                            == vec![0u8; num]
+                        {
+                            break;
+                        }
+                    })
+                },
+            );
+
+            c.bench_function(
+                &("ECDSA_secp256k1_sha2_256_pubkey_hashing_zerobytes=".to_owned()
+                    + &num.to_string()),
+                move |b| {
+                    b.iter(|| loop {
+                        if Sha256::digest(
+                            Secp256k1KeyPair::generate(&mut csprng4).public().as_ref(),
+                        )
+                        .as_ref()[..num]
+                            == vec![0u8; num]
+                        {
+                            break;
+                        }
+                    })
+                },
+            );
+
+            c.bench_function(
+                &("ECDSA_secp256k1_sha3_256_pubkey_hashing_zerobytes=".to_owned()
+                    + &num.to_string()),
+                move |b| {
+                    b.iter(|| loop {
+                        if Sha3_256::digest(
+                            Secp256k1KeyPair::generate(&mut csprng5).public().as_ref(),
+                        )
+                        .as_ref()[..num]
+                            == vec![0u8; num]
+                        {
+                            break;
+                        }
+                    })
+                },
+            );
+
+            c.bench_function(
+                &("ECDSA_secp256k1_blake3_256_pubkey_hashing_zerobytes=".to_owned()
+                    + &num.to_string()),
+                move |b| {
+                    b.iter(|| loop {
+                        if Blake3::digest(
+                            Secp256k1KeyPair::generate(&mut csprng6).public().as_ref(),
+                        )
+                        .as_ref()[..num]
+                            == vec![0u8; num]
+                        {
+                            break;
+                        }
+                    })
+                },
+            );
+        }
+    }
+
     criterion_group! {
         name = mining_benches;
         config = Criterion::default().significance_level(0.1).sample_size(10);
         targets =
-            key_generation,
-            signing,
-            hashing,
+            // key_generation,
+            // signing,
+            // hashing,
+            combo_pubkey_and_hashing,
     }
 }
 
