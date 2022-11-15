@@ -10,7 +10,7 @@ Primitives"</b> by Foteini Baldimtsi (GMU & Mysten Labs), Konstantinos Chalkias 
 Panagiotis Chatzigiannis (Visa Research), and Mahimna Kelkar (Cornell University).
 
 ### Paper
-A 10-pager short paper is available here: [Truncator short paper](/truncator_short_paper.pdf "Truncator: Time-space Tradeoff of Cryptographic
+A 10-pager short paper is available here: [Truncator short paper](/paper/truncator_short_paper.pdf "Truncator: Time-space Tradeoff of Cryptographic
 Primitives")
 
 ### Abstract
