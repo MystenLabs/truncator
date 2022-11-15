@@ -9,6 +9,10 @@ brute-force mining. It is part of the joint research project entitled <b>"Trunca
 Primitives"</b> by Foteini Baldimtsi (GMU & Mysten Labs), Konstantinos Chalkias (Mysten Labs),
 Panagiotis Chatzigiannis (Visa Research), and Mahimna Kelkar (Cornell University).
 
+### Paper
+A 10-pager short paper is available here: [Truncator short paper](/truncator_short_paper.pdf "Truncator: Time-space Tradeoff of Cryptographic
+Primitives")
+
 ### Abstract
 
 We're presenting mining-based techniques to reduce the size of various cryptographic outputs without loss of security. 
